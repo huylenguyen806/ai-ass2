@@ -18,12 +18,8 @@ class Player:
         op = 0
         for row in range(10):
             for col in range(10):
-                if(state[row][col] == '.'):
+                if(state[row][col] == '.' or state[row][col] == 'X'):
                     continue
-                if(state[row][col] == self.str):
-                    playerPos[pl] = [row, col]
-                if(state[row][col] != self.str):
-                    opponentPos[op] = [row, col]
                 if(row > 0 and row < 9 and col > 0 and col < 9):  # from 1 - 8
                     if(state[row-1][col-1] == 'X'
                             and state[row+1][col+1] == 'X'
@@ -35,1021 +31,3418 @@ class Player:
                             and state[row+1][col-1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row > 0 and col > 0):  # [9,9]
                     if(state[row-1][col] == 'X' and state[row][col-1] == 'X'
                             and state[row-1][col-1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row < 9 and col < 9):  # [0,0]
                     if(state[row+1][col] == 'X' and state[row][col+1] == 'X'
                             and state[row+1][col+1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row > 0 and col < 9):  # [9,0]
                     if(state[row-1][col] == 'X' and state[row][col+1] == 'X'
                             and state[row-1][col+1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row < 9 and col > 0):  # [0,9]
                     if(state[row][col-1] == 'X' and state[row+1][col] == 'X'
                             and state[row+1][col-1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row < 9):  # [0,x] with 0 < x < 9
                     if(state[row][col-1] == 'X' and state[row][col+1] == 'X'
                             and state[row+1][col] == 'X' and state[row+1][col-1] == 'X'
                             and state[row+1][col+1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(row > 0):  # [9,x] with 0 < x < 9
                     if(state[row][col-1] == 'X' and state[row][col+1] == 'X'
                             and state[row-1][col] == 'X' and state[row-1][col-1] == 'X'
                             and state[row-1][col+1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 elif(col < 9):  # [x,0] with 0 < x < 9
                     if(state[row-1][col] == 'X' and state[row+1][col] == 'X'
                             and state[row][col+1] == 'X' and state[row+1][col+1] == 'X'
                             and state[row-1][col+1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
                 else:   # [x,9] with 0 < x < 9
                     if(state[row-1][col] == 'X' and state[row+1][col] == 'X'
                             and state[row-1][col-1] == 'X' and state[row][col-1] == 'X'
                             and state[row+1][col-1] == 'X'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
-                            pl += 1
-                        elif(state[row][col] != 'X'):
+                        else:
                             opponentLose[op] = True
-                            op += 1
+                if(state[row][col] == self.str):
+                    playerPos[pl] = [row, col]
+                    pl += 1
+                if(state[row][col] != self.str):
+                    opponentPos[op] = [row, col]
+                    op += 1
 
+        plIsLost = False
+        opIsLost = False
         if(all(item == True for item in playerLose)):
-            return -1  # player loses the game
+            plIsLost = True  # player loses the game
         elif(all(item == True for item in opponentLose)):
-            return 1  # player wins the game
+            opIsLost = True  # player wins the game
+        if(plIsLost and not opIsLost):
+            return -1
+        elif(not plIsLost and opIsLost):
+            return 1
         else:
-            return 0  # neither win nor lose
+            return 0
 
-    def doMove(self, move, state):
+    def doMove(self, move, state, string):
         state[move[0][0]][move[0][1]] = '.'
-        state[move[1][0]][move[1][1]] = self.str
+        state[move[1][0]][move[1][1]] = string
         state[move[2][0]][move[2][1]] = 'X'
 
-    def undoMove(self, move, state):
-        state[move[0][0]][move[0][1]] = self.str
-        state[move[1][0]][move[1][1]] = '.'
+    def undoMove(self, move, state, string):
         state[move[2][0]][move[2][1]] = '.'
+        state[move[1][0]][move[1][1]] = '.'
+        state[move[0][0]][move[0][1]] = string
 
-    def minimax(self, state, depth, isMax):
-        playerPos = [(0, 0), (0, 0), (0, 0), (0, 0)]
-        opponentPos = [(0, 0), (0, 0), (0, 0), (0, 0)]
+    def minimax2(self, state, depth, isMax):
+        playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+
         score = self.evaluate(state, playerPos, opponentPos)
 
         if(score != 0):
             return score
 
-        move = [(0, 0), (0, 0), (0, 0)]
+        move = [[0, 0], [0, 0], [0, 0]]
 
         if(isMax):
             best = -9999
-            # make a move for max
-            for eachQueen in range(4):
-                # [row_motmove,col_notmove]
-                move[0] = playerPos[eachQueen]
-                for eachQueenMove in range(4):
-                    if(eachQueenMove == 0):  # Move horizontal
-                        for col in range(10):
-                            row = move[0][0]
-                            if(state[row][col] == '.'):  # empty slot, it means can move
-                                # save the moved slot: [row_move,col_move]
-                                move[1] = [row, col]
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    elif(eachQueenMove == 1):  # move vertical
-                        for row in range(10):
-                            col = move[0][1]
-                            if(state[row][col] == '.'):
-                                move[1] = [row, col]
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    elif(eachQueenMove == 2):  # move diagonal1: /
-                        # y_queen = x_queen + b_queen
-                        b_queen = move[0][0] - move[0][1]
-                        rangexq0 = None
-                        rangexq1 = None
-                        if(b_queen < 0):
-                            rangexq0 = -b_queen
-                            rangexq1 = 9
-                        else:
-                            rangexq0 = 0
-                            rangexq1 = 9 - b_queen
-                        for x_queen in range(rangexq0, rangexq1+1, 1):
-                            y_queen = x_queen + b_queen
-                            if(state[y_queen][x_queen] == '.'):
-                                move[1] = [y_queen, x_queen]
-                                row = y_queen
-                                col = x_queen
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    else:  # move diagonal2: \
-                        b_queen = move[0][0] + \
-                            move[0][1]  # y_queen = x_queen + b_queen
-                        rangexq0 = None
-                        rangexq1 = None
-                        if(b_queen < 10):
-                            rangexq0 = 0
-                            rangexq1 = b_queen
-                        else:
-                            rangexq0 = b_queen - 9
-                            rangexq1 = 9
-                        for x_queen in range(rangexq0, rangexq1+1, 1):
-                            y_queen = -x_queen + b_queen
-                            if(state[y_queen][x_queen] == '.'):
-                                move[1] = [y_queen, x_queen]
-                                row = y_queen
-                                col = x_queen
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = max(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
+            # iterate each player
+            for eachPlayer in range(4):
+                move[0] = playerPos[eachPlayer]
+                # iterate each move (there're 8 moves):
+                #up, down, left, right, upleft, upright, downleft, downright
+                row0 = move[0][0]
+                col0 = move[0][1]
+                for eachMove in range(8):
+                    # move up
+                    if(eachMove == 0):
+                        # decreasing row
+                        for eachRow in range(row0 - 1, -1, -1):
+                            if(state[eachRow][col0] != '.'):
+                                break
+                            move[1] = [eachRow, col0]
+                            # fire arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move down
+                    elif(eachMove == 1):
+                        # increasing row
+                        for eachRow in range(row0 + 1, 10, 1):
+                            if(state[eachRow][col0] != '.'):
+                                break
+                            move[1] = [eachRow, col0]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move left
+                    elif(eachMove == 2):
+                        # decreasing col
+                        for eachCol in range(col0 - 1, -1, -1):
+                            if(state[row0][eachCol] != '.'):
+                                break
+                            move[1] = [row0, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move right
+                    elif(eachMove == 3):
+                        # increasing col
+                        for eachCol in range(col0 + 1, 10, 1):
+                            if(state[row0][eachCol] != '.'):
+                                break
+                            move[1] = [row0, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move upleft
+                    elif(eachMove == 4):
+                        # y = ax + b and decreasing iteration (y = row0, x = col0)
+                        eachRow = row0
+                        for eachCol in range(col0 - 1, -1, -1):
+                            eachRow -= 1
+                            if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move upright
+                    elif(eachMove == 5):
+                        # y = -ax + b, increasing x, decreasing y (y = row0, x= col0)
+                        eachRow = row0
+                        for eachCol in range(col0 + 1, 10, 1):
+                            eachRow -= 1
+                            if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move downleft
+                    elif(eachMove == 6):
+                        # y = -ax + b, decreasing x, increasing y (y = row0, x = col0)
+                        eachRow = row0
+                        for eachCol in range(col0 - 1, -1, -1):
+                            eachRow += 1
+                            if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                    # move downright
+                    else:
+                        # y = ax + b and increasing iteration (y = row0, x = col0)
+                        eachRow = row0
+                        for eachCol in range(col0 + 1, 10, 1):
+                            eachRow += 1
+                            if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, self.str)
+
             return best
         else:
             best = 9999
-            # make a move for min
-            for eachQueen in range(4):
-                # [row_motmove,col_notmove]
-                move[0] = opponentPos[eachQueen]
-                for eachQueenMove in range(4):
-                    if(eachQueenMove == 0):  # Move horizontal
-                        for col in range(10):
-                            row = move[0][0]
-                            if(state[row][col] == '.'):  # empty slot, it means can move
-                                # save the moved slot: [row_move,col_move]
-                                move[1] = [row, col]
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    elif(eachQueenMove == 1):  # move vertical
-                        for row in range(10):
-                            col = move[0][1]
-                            if(state[row][col] == '.'):
-                                move[1] = [row, col]
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    elif(eachQueenMove == 2):  # move diagonal1: /
-                        # y_queen = x_queen + b_queen
-                        b_queen = move[0][0] - move[0][1]
-                        rangexq0 = None
-                        rangexq1 = None
-                        if(b_queen < 0):
-                            rangexq0 = -b_queen
-                            rangexq1 = 9
-                        else:
-                            rangexq0 = 0
-                            rangexq1 = 9 - b_queen
-                        for x_queen in range(rangexq0, rangexq1+1, 1):
-                            y_queen = x_queen + b_queen
-                            if(state[y_queen][x_queen] == '.'):
-                                move[1] = [y_queen, x_queen]
-                                row = y_queen
-                                col = x_queen
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                    else:  # move diagonal2: \
-                        b_queen = move[0][0] + \
-                            move[0][1]  # y_queen = x_queen + b_queen
-                        rangexq0 = None
-                        rangexq1 = None
-                        if(b_queen < 10):
-                            rangexq0 = 0
-                            rangexq1 = b_queen
-                        else:
-                            rangexq0 = b_queen - 9
-                            rangexq1 = 9
-                        for x_queen in range(rangexq0, rangexq1+1, 1):
-                            y_queen = -x_queen + b_queen
-                            if(state[y_queen][x_queen] == '.'):
-                                move[1] = [y_queen, x_queen]
-                                row = y_queen
-                                col = x_queen
-                                for eachArrowDirection in range(4):
-                                    if(eachArrowDirection == 0):  # horizontal direction: --
-                                        for aCol in range(10):
-                                            aRow = move[1][0]
-                                            if(state[aRow][aCol] == '.' or
-                                                    (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 1):  # vertical direction: |
-                                        for aRow in range(10):
-                                            aCol = move[1][1]
-                                            if(state[aRow][aCol] == '.'):
-                                                move[2] = [aRow, aCol]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                        b = row - col  # y = x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 0):  # y go to 0 faster than x
-                                            rangex0 = -b
-                                            rangex1 = 9  # x go to 9 faster than y
-                                        else:  # x go to 0 faster than y
-                                            rangex0 = 0
-                                            rangex1 = 9 - b  # y go to 9 faster than x
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
-                                    else:  # diagonal2 direction: \
-                                        b = row + col  # y = -x + b
-                                        rangex0 = None
-                                        rangex1 = None
-                                        if(b < 10):  # rangex from 0 to where y=0
-                                            rangex0 = 0
-                                            rangex1 = b
-                                        else:  # rangex from where y=9 to 9
-                                            rangex0 = b - 9
-                                            rangex1 = 9
-                                        for x in range(rangex0, rangex1+1, 1):  # for each col
-                                            y = -x + b  # find each col's row
-                                            if(state[y][x] == '.'):
-                                                move[2] = [y, x]
-                                                self.doMove(move, state)
-                                                best = min(best, self.minimax(
-                                                    state, depth+1, not isMax))
-                                                self.undoMove(move, state)
+            opstr = 'w'
+            if(self.str == 'w'):
+                opstr = 'b'
+            # iterate each opponent
+            for eachOpponent in range(4):
+                move[0] = opponentPos[eachOpponent]
+                # iterate each move (there're 8 moves):
+                #up, down, left, right, upleft, upright, downleft, downright
+                row0 = move[0][0]
+                col0 = move[0][1]
+                for eachMove in range(8):
+                    # move up
+                    if(eachMove == 0):
+                        # decreasing row, from current pos
+                        for eachRow in range(row0, -1, -1):
+                            if(state[eachRow][col0] != '.' and eachRow < row0):
+                                break
+                            move[1] = [eachRow, col0]
+                            # fire arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move down
+                    elif(eachMove == 1):
+                        # increasing row
+                        for eachRow in range(row0 + 1, 10, 1):
+                            if(state[eachRow][col0] != '.'):
+                                break
+                            move[1] = [eachRow, col0]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move left
+                    elif(eachMove == 2):
+                        # decreasing col, from current pos
+                        for eachCol in range(col0, -1, -1):
+                            if(state[row0][eachCol] != '.' and eachCol < col0):
+                                break
+                            move[1] = [row0, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move right
+                    elif(eachMove == 3):
+                        # increasing col
+                        for eachCol in range(col0 + 1, 10, 1):
+                            if(state[row0][eachCol] != '.'):
+                                break
+                            move[1] = [row0, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move upleft
+                    elif(eachMove == 4):
+                        # y = ax + b and decreasing iteration (y = row0, x = col0)
+                        # including current pos
+                        eachRow = row0 + 1
+                        for eachCol in range(col0, -1, -1):
+                            eachRow -= 1
+                            if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move upright
+                    elif(eachMove == 5):
+                        # y = -ax + b, increasing x, decreasing y (y = row0, x= col0)
+                        # including current pos
+                        eachRow = row0 + 1
+                        for eachCol in range(col0, 10, 1):
+                            eachRow -= 1
+                            if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move downleft
+                    elif(eachMove == 6):
+                        # y = -ax + b, decreasing x, increasing y (y = row0, x = col0)
+                        eachRow = row0
+                        for eachCol in range(col0 - 1, -1, -1):
+                            eachRow += 1
+                            if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                    # move downright
+                    else:
+                        # y = ax + b and increasing iteration (y = row0, x = col0)
+                        eachRow = row0
+                        for eachCol in range(col0 + 1, 10, 1):
+                            eachRow += 1
+                            if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                                break
+                            move[1] = [eachRow, eachCol]
+                            # fire an arrow
+                            for eachArrow in range(8):
+                                row = move[1][0]
+                                col = move[1][1]
+                                # fire up
+                                if(eachArrow == 0):
+                                    # iterating up (which means decreasing row)
+                                    for rowi in range(row - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire down
+                                elif(eachArrow == 1):
+                                    # iterating down (which means increasing row)
+                                    for rowi in range(row + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[rowi][col] != '.'):
+                                            break
+                                        move[2] = [rowi, col]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire left
+                                elif (eachArrow == 2):
+                                    # iterating left (which means decreasing col)
+                                    for coli in range(col - 1, -1, -1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire right
+                                elif(eachArrow == 3):
+                                    # iterating right (which means increasing col)
+                                    for coli in range(col + 1, 10, 1):
+                                        # meet an obstacle
+                                        if(state[row][coli] != '.'):
+                                            break
+                                        move[2] = [row, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upleft
+                                elif (eachArrow == 4):
+                                    # y = +ax + b and decreasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire upright
+                                elif (eachArrow == 5):
+                                    # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi -= 1
+                                        if(rowi < 0 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downleft
+                                elif (eachArrow == 6):
+                                    # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col - 1, -1, -1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
+                                # fire downright
+                                else:
+                                    # y = +ax + b and increasing iteration (y = row, x = col)
+                                    rowi = row
+                                    for coli in range(col + 1, 10, 1):
+                                        rowi += 1
+                                        if(rowi > 9 or state[rowi][coli] != '.'):
+                                            break
+                                        move[2] = [rowi, coli]
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.minimax2(
+                                            state, depth, not isMax))
+                                        self.undoMove(move, state, opstr)
+
             return best
 
-    def findBestMove(self, state):
-        playerPos = [(0, 0), (0, 0), (0, 0), (0, 0)]
-        opponentPos = [(0, 0), (0, 0), (0, 0), (0, 0)]
+    def findBestMove2(self, state):
+        playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
         self.evaluate(state, playerPos, opponentPos)
         bestVal = -99999999999999999
-        move = [(0, 0), (0, 0), (0, 0), (0, 0)]
+        move = [[0, 0], [0, 0], [0, 0]]
         bestMove = None
-        for eachQueen in range(4):
-            move[0] = playerPos[eachQueen]  # [row_motmove,col_notmove]
-            for eachQueenMove in range(4):
-                if(eachQueenMove == 0):  # Move horizontal
-                    for col in range(10):
-                        row = move[0][0]
-                        if(state[row][col] == '.'):  # empty slot, it means can move
-                            # save the moved slot: [row_move,col_move]
-                            move[1] = [row, col]
-                            for eachArrowDirection in range(4):
-                                if(eachArrowDirection == 0):  # horizontal direction: --
-                                    for aCol in range(10):
-                                        aRow = move[1][0]
-                                        if(state[aRow][aCol] == '.' or
-                                                (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 1):  # vertical direction: |
-                                    for aRow in range(10):
-                                        aCol = move[1][1]
-                                        if(state[aRow][aCol] == '.'):
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                    b = row - col  # y = x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 0):  # y go to 0 faster than x
-                                        rangex0 = -b
-                                        rangex1 = 9  # x go to 9 faster than y
-                                    else:  # x go to 0 faster than y
-                                        rangex0 = 0
-                                        rangex1 = 9 - b  # y go to 9 faster than x
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                else:  # diagonal2 direction: \
-                                    b = row + col  # y = -x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 10):  # rangex from 0 to where y=0
-                                        rangex0 = 0
-                                        rangex1 = b
-                                    else:  # rangex from where y=9 to 9
-                                        rangex0 = b - 9
-                                        rangex1 = 9
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = -x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                elif(eachQueenMove == 1):  # move vertical
-                    for row in range(10):
-                        col = move[0][1]
-                        if(state[row][col] == '.'):
-                            move[1] = [row, col]
-                            for eachArrowDirection in range(4):
-                                if(eachArrowDirection == 0):  # horizontal direction: --
-                                    for aCol in range(10):
-                                        aRow = move[1][0]
-                                        if(state[aRow][aCol] == '.' or
-                                                (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 1):  # vertical direction: |
-                                    for aRow in range(10):
-                                        aCol = move[1][1]
-                                        if(state[aRow][aCol] == '.'):
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                    b = row - col  # y = x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 0):  # y go to 0 faster than x
-                                        rangex0 = -b
-                                        rangex1 = 9  # x go to 9 faster than y
-                                    else:  # x go to 0 faster than y
-                                        rangex0 = 0
-                                        rangex1 = 9 - b  # y go to 9 faster than x
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                else:  # diagonal2 direction: \
-                                    b = row + col  # y = -x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 10):  # rangex from 0 to where y=0
-                                        rangex0 = 0
-                                        rangex1 = b
-                                    else:  # rangex from where y=9 to 9
-                                        rangex0 = b - 9
-                                        rangex1 = 9
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = -x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                elif(eachQueenMove == 2):  # move diagonal1: /
-                    # y_queen = x_queen + b_queen
-                    b_queen = move[0][0] - move[0][1]
-                    rangexq0 = None
-                    rangexq1 = None
-                    if(b_queen < 0):
-                        rangexq0 = -b_queen
-                        rangexq1 = 9
-                    else:
-                        rangexq0 = 0
-                        rangexq1 = 9 - b_queen
-                    for x_queen in range(rangexq0, rangexq1+1, 1):
-                        y_queen = x_queen + b_queen
-                        if(state[y_queen][x_queen] == '.'):
-                            move[1] = [y_queen, x_queen]
-                            row = y_queen
-                            col = x_queen
-                            for eachArrowDirection in range(4):
-                                if(eachArrowDirection == 0):  # horizontal direction: --
-                                    for aCol in range(10):
-                                        aRow = move[1][0]
-                                        if(state[aRow][aCol] == '.' or
-                                                (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 1):  # vertical direction: |
-                                    for aRow in range(10):
-                                        aCol = move[1][1]
-                                        if(state[aRow][aCol] == '.'):
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                    b = row - col  # y = x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 0):  # y go to 0 faster than x
-                                        rangex0 = -b
-                                        rangex1 = 9  # x go to 9 faster than y
-                                    else:  # x go to 0 faster than y
-                                        rangex0 = 0
-                                        rangex1 = 9 - b  # y go to 9 faster than x
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                else:  # diagonal2 direction: \
-                                    b = row + col  # y = -x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 10):  # rangex from 0 to where y=0
-                                        rangex0 = 0
-                                        rangex1 = b
-                                    else:  # rangex from where y=9 to 9
-                                        rangex0 = b - 9
-                                        rangex1 = 9
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = -x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                else:  # move diagonal2: \
-                    b_queen = move[0][0] + \
-                        move[0][1]  # y_queen = x_queen + b_queen
-                    rangexq0 = None
-                    rangexq1 = None
-                    if(b_queen < 10):
-                        rangexq0 = 0
-                        rangexq1 = b_queen
-                    else:
-                        rangexq0 = b_queen - 9
-                        rangexq1 = 9
-                    for x_queen in range(rangexq0, rangexq1+1, 1):
-                        y_queen = -x_queen + b_queen
-                        if(state[y_queen][x_queen] == '.'):
-                            move[1] = [y_queen, x_queen]
-                            row = y_queen
-                            col = x_queen
-                            for eachArrowDirection in range(4):
-                                if(eachArrowDirection == 0):  # horizontal direction: --
-                                    for aCol in range(10):
-                                        aRow = move[1][0]
-                                        if(state[aRow][aCol] == '.' or
-                                                (aRow == row and aCol == col)):  # fire an arrow to the old pos
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 1):  # vertical direction: |
-                                    for aRow in range(10):
-                                        aCol = move[1][1]
-                                        if(state[aRow][aCol] == '.'):
-                                            move[2] = [aRow, aCol]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                elif(eachArrowDirection == 2):  # diagonal1 direction: /
-                                    b = row - col  # y = x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 0):  # y go to 0 faster than x
-                                        rangex0 = -b
-                                        rangex1 = 9  # x go to 9 faster than y
-                                    else:  # x go to 0 faster than y
-                                        rangex0 = 0
-                                        rangex1 = 9 - b  # y go to 9 faster than x
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-                                else:  # diagonal2 direction: \
-                                    b = row + col  # y = -x + b
-                                    rangex0 = None
-                                    rangex1 = None
-                                    if(b < 10):  # rangex from 0 to where y=0
-                                        rangex0 = 0
-                                        rangex1 = b
-                                    else:  # rangex from where y=9 to 9
-                                        rangex0 = b - 9
-                                        rangex1 = 9
-                                    for x in range(rangex0, rangex1+1, 1):  # for each col
-                                        y = -x + b  # find each col's row
-                                        if(state[y][x] == '.'):
-                                            move[2] = [y, x]
-                                            self.doMove(move, state)
-                                            depth = 0
-                                            moveVal = self.minimax(
-                                                state, depth, False)
-                                            if(moveVal - depth > bestVal):
-                                                bestMove = move
-                                                bestVal = moveVal - depth
-                                            self.undoMove(move, state)
-        return bestMove
+        # iterate each player
+        for eachPlayer in range(4):
+            move[0] = playerPos[eachPlayer]
+            # iterate each move (there're 8 moves):
+            #up, down, left, right, upleft, upright, downleft, downright
+            row0 = move[0][0]
+            col0 = move[0][1]
+            for eachMove in range(8):
+                # move up
+                if(eachMove == 0):
+                    # decreasing row
+                    for eachRow in range(row0 - 1, -1, -1):
+                        if(state[eachRow][col0] != '.'):
+                            break
+                        move[1] = [eachRow, col0]
+                        # fire arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
 
-        # Student MUST implement this function
-        # The return value should be a move that is denoted by a list of tuples:
-        # [(row1, col1), (row2, col2), (row3, col3)] with:
-        # (row1, col1): current position of selected amazon
-        # (row2, col2): new position of selected amazon
-        # (row3, col3): position of the square is shot
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move down
+                elif(eachMove == 1):
+                    # increasing row
+                    for eachRow in range(row0 + 1, 10, 1):
+                        if(state[eachRow][col0] != '.'):
+                            break
+                        move[1] = [eachRow, col0]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move left
+                elif(eachMove == 2):
+                    # decreasing col
+                    for eachCol in range(col0 - 1, -1, -1):
+                        if(state[row0][eachCol] != '.'):
+                            break
+                        move[1] = [row0, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move right
+                elif(eachMove == 3):
+                    # increasing col
+                    for eachCol in range(col0 + 1, 10, 1):
+                        if(state[row0][eachCol] != '.'):
+                            break
+                        move[1] = [row0, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move upleft
+                elif(eachMove == 4):
+                    # y = ax + b and decreasing iteration (y = row0, x = col0)
+                    eachRow = row0
+                    for eachCol in range(col0 - 1, -1, -1):
+                        eachRow -= 1
+                        if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                            break
+                        move[1] = [eachRow, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move upright
+                elif(eachMove == 5):
+                    # y = -ax + b, increasing x, decreasing y (y = row0, x= col0)
+                    eachRow = row0
+                    for eachCol in range(col0 + 1, 10, 1):
+                        eachRow -= 1
+                        if(eachRow < 0 or state[eachRow][eachCol] != '.'):
+                            break
+                        move[1] = [eachRow, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move downleft
+                elif(eachMove == 6):
+                    # y = -ax + b, decreasing x, increasing y (y = row0, x = col0)
+                    eachRow = row0
+                    for eachCol in range(col0 - 1, -1, -1):
+                        eachRow += 1
+                        if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                            break
+                        move[1] = [eachRow, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                # move downright
+                else:
+                    # y = ax + b and increasing iteration (y = row0, x = col0)
+                    eachRow = row0
+                    for eachCol in range(col0 + 1, 10, 1):
+                        eachRow += 1
+                        if(eachRow > 9 or state[eachRow][eachCol] != '.'):
+                            break
+                        move[1] = [eachRow, eachCol]
+                        # fire an arrow
+                        for eachArrow in range(8):
+                            row = move[1][0]
+                            col = move[1][1]
+                            # fire up
+                            if(eachArrow == 0):
+                                # iterating up (which means decreasing row)
+                                for rowi in range(row - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire down
+                            elif(eachArrow == 1):
+                                # iterating down (which means increasing row)
+                                for rowi in range(row + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[rowi][col] != '.'):
+                                        break
+                                    move[2] = [rowi, col]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire left
+                            elif (eachArrow == 2):
+                                # iterating left (which means decreasing col)
+                                for coli in range(col - 1, -1, -1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire right
+                            elif(eachArrow == 3):
+                                # iterating right (which means increasing col)
+                                for coli in range(col + 1, 10, 1):
+                                    # meet an obstacle
+                                    if(state[row][coli] != '.'):
+                                        break
+                                    move[2] = [row, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upleft
+                            elif (eachArrow == 4):
+                                # y = +ax + b and decreasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire upright
+                            elif (eachArrow == 5):
+                                # y = -ax + b, increasing x and decreasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi -= 1
+                                    if(rowi < 0 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downleft
+                            elif (eachArrow == 6):
+                                # y = -ax + b, decreasing x and increasing y (y = row, x = col)
+                                rowi = row
+                                for coli in range(col - 1, -1, -1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+                            # fire downright
+                            else:
+                                # y = +ax + b and increasing iteration (y = row, x = col)
+                                rowi = row
+                                for coli in range(col + 1, 10, 1):
+                                    rowi += 1
+                                    if(rowi > 9 or state[rowi][coli] != '.'):
+                                        break
+                                    move[2] = [rowi, coli]
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    moveVal = self.minimax2(
+                                        state, depth, False)
+                                    if(moveVal - depth > bestVal):
+                                        bestMove = move
+                                        bestVal = moveVal - depth
+                                    self.undoMove(move, state, self.str)
+
+        return bestMove
 
     def nextMove(self, state):
         # result = [(0,3),(5,3),(8,6)] # example move in wikipedia
-        return self.findBestMove(state)
+        return self.findBestMove2(state)
