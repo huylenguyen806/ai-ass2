@@ -1,7 +1,7 @@
 
 
 # ======================== Class Player =======================================
-
+from copy import deepcopy
 
 class Player:
     # student do not allow to change two first functions
@@ -107,9 +107,9 @@ class Player:
         elif(all(item == True for item in opponentLose)):
             opIsLost = True  # player wins the game
         if(plIsLost and not opIsLost):
-            return -1
+            return -10
         elif(not plIsLost and opIsLost):
-            return 1
+            return 10
         else:
             return 0
 
@@ -2596,7 +2596,6 @@ class Player:
         playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
         opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
         self.evaluate(state, playerPos, opponentPos)
-        print(playerPos)
         bestVal = -99999999999999999
         move = [[0, 0], [0, 0], [0, 0]]
         bestMove = None
@@ -2632,7 +2631,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2649,7 +2648,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2666,7 +2665,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2683,7 +2682,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2701,7 +2700,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2719,7 +2718,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2737,7 +2736,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2755,7 +2754,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2783,7 +2782,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2800,7 +2799,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2817,7 +2816,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2834,7 +2833,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2852,7 +2851,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2870,7 +2869,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2888,7 +2887,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2906,7 +2905,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2934,7 +2933,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2951,7 +2950,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2968,7 +2967,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -2985,7 +2984,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3003,7 +3002,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3021,7 +3020,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3039,7 +3038,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3057,7 +3056,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3085,7 +3084,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3102,7 +3101,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3119,7 +3118,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3136,7 +3135,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3154,7 +3153,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3172,7 +3171,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3190,7 +3189,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3208,7 +3207,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3238,7 +3237,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3255,7 +3254,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3272,7 +3271,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3289,7 +3288,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3307,7 +3306,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3325,7 +3324,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3343,7 +3342,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3361,7 +3360,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3391,7 +3390,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3408,7 +3407,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3425,7 +3424,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3442,7 +3441,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3460,7 +3459,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3478,7 +3477,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3496,7 +3495,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3514,7 +3513,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3544,7 +3543,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3561,7 +3560,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3578,7 +3577,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3595,7 +3594,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3613,7 +3612,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3631,7 +3630,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3649,7 +3648,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3667,7 +3666,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3697,7 +3696,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3714,7 +3713,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3731,7 +3730,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3748,7 +3747,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3766,7 +3765,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3784,7 +3783,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3802,7 +3801,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3820,7 +3819,7 @@ class Player:
                                     moveVal = self.minimax2(
                                         state, depth, False, -9999, 9999)
                                     if(moveVal - depth > bestVal):
-                                        bestMove = move
+                                        bestMove = deepcopy(move)
                                         bestVal = moveVal - depth
                                     self.undoMove(move, state, self.str)
 
@@ -3838,7 +3837,7 @@ class Player:
             return True
         else:
             return False
-    
+
     def moveDown(self, move, step, state, isQueen):
         row = move[0][0] if isQueen else move[1][0]
         col = move[0][1] if isQueen else move[1][1]
@@ -3878,7 +3877,7 @@ class Player:
         else:
             return False
 
-    def moveUpLeft(self, move, step, state, isQueen): #decrease both row, col
+    def moveUpLeft(self, move, step, state, isQueen):  # decrease both row, col
         row = move[0][0] if isQueen else move[1][0]
         col = move[0][1] if isQueen else move[1][1]
         if(col - step >= 0 and row - step >= 0):
@@ -3893,7 +3892,7 @@ class Player:
         else:
             return False
 
-    def moveDownRight(self, move, step, state, isQueen): #increase both row, col
+    def moveDownRight(self, move, step, state, isQueen):  # increase both row, col
         row = move[0][0] if isQueen else move[1][0]
         col = move[0][1] if isQueen else move[1][1]
         if(col + step <= 9 and row + step <= 9):
@@ -3908,7 +3907,7 @@ class Player:
         else:
             return False
 
-    def moveUpRight(self, move, step, state, isQueen): #increase col, decrease row
+    def moveUpRight(self, move, step, state, isQueen):  # increase col, decrease row
         row = move[0][0] if isQueen else move[1][0]
         col = move[0][1] if isQueen else move[1][1]
         if(col + step <= 9 and row - step >= 0):
@@ -3923,7 +3922,7 @@ class Player:
         else:
             return False
 
-    def moveDownLeft(self, move, step, state, isQueen): #decrease col, increase row
+    def moveDownLeft(self, move, step, state, isQueen):  # decrease col, increase row
         row = move[0][0] if isQueen else move[1][0]
         col = move[0][1] if isQueen else move[1][1]
         if(col - step >= 0 and row + step <= 9):
@@ -3937,6 +3936,147 @@ class Player:
             return True
         else:
             return False
+
+    def moves(self, move, step, state, isQueen, iterator):
+        if(iterator == 0):
+            return self.moveUp(move, step, state, isQueen)
+        elif(iterator == 1):
+            return self.moveDown(move, step, state, isQueen)
+        elif(iterator == 2):
+            return self.moveLeft(move, step, state, isQueen)
+        elif(iterator == 3):
+            return self.moveRight(move, step, state, isQueen)
+        elif(iterator == 4):
+            return self.moveUpLeft(move, step, state, isQueen)
+        elif(iterator == 5):
+            return self.moveDownRight(move, step, state, isQueen)
+        elif(iterator == 6):
+            return self.moveUpRight(move, step, state, isQueen)
+        else:
+            return self.moveDownLeft(move, step, state, isQueen)
+
+    def alphabetaMinimax(self, state, depth, isMax, alpha, beta):
+        playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        score = self.evaluate(state, playerPos, opponentPos)
+        best = None
+        move = [(0, 0), (0, 0), (0, 0)]
+        if(score != 0 or depth > 5):
+            return score
+        if(isMax):
+            best = -99999
+            for eachPlayer in range(4):
+                move[0] = (playerPos[eachPlayer][0], playerPos[eachPlayer][1])
+                isMoveLeft = True
+                stepMove = 0
+                while(isMoveLeft):
+                    stepMove += 1
+                    tempMove = [False, False, False,
+                                False, False, False, False, False]
+                    for eachMove in range(8):
+                        if(self.moves(move, stepMove, state, True, eachMove)):
+                            tempMove[eachMove] = True
+                            isArrowLeft = True
+                            stepArrow = 0
+                            while(isArrowLeft):
+                                stepArrow += 1
+                                tempArrow = [False, False, False,
+                                             False, False, False, False, False]
+                                for eachArrow in range(8):
+                                    if(self.moves(move, stepArrow, state, False, eachArrow)):
+                                        tempArrow[eachArrow] = True
+                                        self.doMove(move, state, self.str)
+                                        depth += 1
+                                        best = max(best, self.alphabetaMinimax(state, depth,
+                                                                               not isMax, alpha, beta))
+                                        self.undoMove(move, state, self.str)
+                                        alpha = max(best, alpha)
+                                        if(beta <= alpha):
+                                            break
+                                if(all(item2 == False for item2 in tempArrow)):
+                                    isArrowLeft = False
+                    if(all(item1 == False for item1 in tempMove)):
+                        isMoveLeft = False
+        else:
+            best = 99999
+            opstr = 'w'
+            if(self.str == 'w'):
+                opstr = 'b'
+            for eachOpponent in range(4):
+                move[0] = (opponentPos[eachOpponent][0],
+                           opponentPos[eachOpponent][1])
+                isMoveLeft = True
+                stepMove = 0
+                while(isMoveLeft):
+                    stepMove += 1
+                    tempMove = [False, False, False,
+                                False, False, False, False, False]
+                    for eachMove in range(8):
+                        if(self.moves(move, stepMove, state, True, eachMove)):
+                            tempMove[eachMove] = True
+                            isArrowLeft = True
+                            stepArrow = 0
+                            while(isArrowLeft):
+                                stepArrow += 1
+                                tempArrow = [False, False, False,
+                                             False, False, False, False, False]
+                                for eachArrow in range(8):
+                                    if(self.moves(move, stepArrow, state, False, eachArrow)):
+                                        tempArrow[eachArrow] = True
+                                        self.doMove(move, state, opstr)
+                                        depth += 1
+                                        best = min(best, self.alphabetaMinimax(state, depth,
+                                                                               not isMax, alpha, beta))
+                                        self.undoMove(move, state, opstr)
+                                        beta = min(best, beta)
+                                        if(beta <= alpha):
+                                            break
+                                if(all(item2 == False for item2 in tempArrow)):
+                                    isArrowLeft = False
+                    if(all(item1 == False for item1 in tempMove)):
+                        isMoveLeft = False
+        return best
+
+    def findBestMove(self, state):
+        playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        self.evaluate(state, playerPos, opponentPos)
+        bestVal = -9999999999999999999999
+        move = [(0, 0), (0, 0), (0, 0)]
+        bestMove = None
+        for eachPlayer in range(4):
+            move[0] = (playerPos[eachPlayer][0], playerPos[eachPlayer][1])
+            isMoveLeft = True
+            stepMove = 0
+            while(isMoveLeft):
+                stepMove += 1
+                tempMove = [False, False, False,
+                            False, False, False, False, False]
+                for eachMove in range(8):
+                    if(self.moves(move, stepMove, state, True, eachMove)):
+                        tempMove[eachMove] = True
+                        isArrowLeft = True
+                        stepArrow = 0
+                        while(isArrowLeft):
+                            stepArrow += 1
+                            tempArrow = [False, False, False,
+                                         False, False, False, False, False]
+                            for eachArrow in range(8):
+                                if(self.moves(move, stepArrow, state, False, eachArrow)):
+                                    tempArrow[eachArrow] = True
+                                    self.doMove(move, state, self.str)
+                                    depth = 0
+                                    best = self.alphabetaMinimax(state, depth,
+                                                                 False, -99999, 99999)
+                                    self.undoMove(move, state, self.str)
+                                    if(best - depth > bestVal):
+                                        bestVal = best - depth
+                                        bestMove = deepcopy(move)
+                            if(all(item2 == False for item2 in tempArrow)):
+                                isArrowLeft = False
+                if(all(item1 == False for item1 in tempMove)):
+                    isMoveLeft = False
+        return bestMove
 
     def nextMove(self, state):
         # result = [(0,3),(5,3),(8,6)] # example move in wikipedia
