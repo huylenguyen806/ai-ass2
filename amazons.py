@@ -1,5 +1,6 @@
 
-
+import random
+import time
 # ======================== Class Player =======================================
 from copy import deepcopy
 
@@ -11,14 +12,18 @@ class Player:
     def __str__(self):
         return self.str
 
-    def evaluate(self, state, playerPos, opponentPos):
+    def evaluate(self, state, playerPos, opponentPos, numberofX, noMoveLeftPL, noMoveLeftOP):
         playerLose = [False, False, False, False]
         opponentLose = [False, False, False, False]
         pl = 0
         op = 0
+        numberofX[:] = [0]
         for row in range(10):
             for col in range(10):
-                if(state[row][col] == '.' or state[row][col] == 'X'):
+                if(state[row][col] == '.'):
+                    continue
+                if(state[row][col] == 'X'):
+                    numberofX[0] += 1
                     continue
                 if(row > 0 and row < 9 and col > 0 and col < 9):  # from 1 - 8
                     if(state[row-1][col-1] != '.'
@@ -33,35 +38,35 @@ class Player:
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row > 0 and col > 0):  # [9,9]
+                elif(row == 9 and col == 9):  # [9,9]
                     if(state[row-1][col] != '.' and state[row][col-1] != '.'
                             and state[row-1][col-1] != '.'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row < 9 and col < 9):  # [0,0]
+                elif(row == 0 and col == 0):  # [0,0]
                     if(state[row+1][col] != '.' and state[row][col+1] != '.'
                             and state[row+1][col+1] != '.'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row > 0 and col < 9):  # [9,0]
+                elif(row == 9 and col == 0):  # [9,0]
                     if(state[row-1][col] != '.' and state[row][col+1] != '.'
                             and state[row-1][col+1] != '.'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row < 9 and col > 0):  # [0,9]
+                elif(row == 0 and col == 9):  # [0,9]
                     if(state[row][col-1] != '.' and state[row+1][col] != '.'
                             and state[row+1][col-1] != '.'):
                         if(state[row][col] == self.str):
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row < 9):  # [0,x] with 0 < x < 9
+                elif(row == 0 and col > 0 and col < 9):  # [0,x] with 0 < x < 9
                     if(state[row][col-1] != '.' and state[row][col+1] != '.'
                             and state[row+1][col] != '.' and state[row+1][col-1] != '.'
                             and state[row+1][col+1] != '.'):
@@ -69,7 +74,7 @@ class Player:
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(row > 0):  # [9,x] with 0 < x < 9
+                elif(row == 9 and col > 0 and col < 9):  # [9,x] with 0 < x < 9
                     if(state[row][col-1] != '.' and state[row][col+1] != '.'
                             and state[row-1][col] != '.' and state[row-1][col-1] != '.'
                             and state[row-1][col+1] != '.'):
@@ -77,7 +82,7 @@ class Player:
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                elif(col < 9):  # [x,0] with 0 < x < 9
+                elif(col == 0 and row > 0 and row < 9):  # [x,0] with 0 < x < 9
                     if(state[row-1][col] != '.' and state[row+1][col] != '.'
                             and state[row][col+1] != '.' and state[row+1][col+1] != '.'
                             and state[row-1][col+1] != '.'):
@@ -85,7 +90,7 @@ class Player:
                             playerLose[pl] = True
                         else:
                             opponentLose[op] = True
-                else:   # [x,9] with 0 < x < 9
+                elif(col == 9 and row > 0 and row < 9):   # [x,9] with 0 < x < 9
                     if(state[row-1][col] != '.' and state[row+1][col] != '.'
                             and state[row-1][col-1] != '.' and state[row][col-1] != '.'
                             and state[row+1][col-1] != '.'):
@@ -99,7 +104,8 @@ class Player:
                 else:
                     opponentPos[op] = [row, col]
                     op += 1
-
+        noMoveLeftPL[:] = playerLose
+        noMoveLeftOP[:] = opponentLose
         plIsLost = False
         opIsLost = False
         if(all(item == True for item in playerLose)):
@@ -122,6 +128,20 @@ class Player:
         state[move[2][0]][move[2][1]] = '.'
         state[move[1][0]][move[1][1]] = '.'
         state[move[0][0]][move[0][1]] = string
+
+    def doMoveForQueen(self, move, state, string):
+        state[move[0][0]][move[0][1]] = '.'
+        state[move[1][0]][move[1][1]] = string
+    
+    def undoMoveForQueen(self, move, state, string):
+        state[move[1][0]][move[1][1]] = '.'
+        state[move[0][0]][move[0][1]] = string
+
+    def doFireArrow(self, move, state):
+        state[move[2][0]][move[2][1]] = 'X'
+    
+    def undoFireArrow(self, move, state):
+        state[move[2][0]][move[2][1]] = '.'
 
     def minimax2(self, state, depth, isMax, alpha, beta):
         playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
@@ -3955,17 +3975,21 @@ class Player:
         else:
             return self.moveDownLeft(move, step, state, isQueen)
 
-    def alphabetaMinimax(self, state, depth, isMax, alpha, beta):
+    def alphabetaMinimax(self, state, depth, isMax, alphabeta):
         playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
         opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
-        score = self.evaluate(state, playerPos, opponentPos)
+        noMoveLeftPL = [True, True, True, True]
+        noMoveLeftOP = [True, True, True, True]
+        score = self.evaluate(state, playerPos, opponentPos, [0], noMoveLeftPL, noMoveLeftOP)
         best = None
         move = [(0, 0), (0, 0), (0, 0)]
-        if(score != 0 or depth > 5):
+        if(score != 0 or depth[0] > 100):
             return score
         if(isMax):
             best = -99999
             for eachPlayer in range(4):
+                if(noMoveLeftPL[eachPlayer]):
+                    continue
                 move[0] = (playerPos[eachPlayer][0], playerPos[eachPlayer][1])
                 isMoveLeft = True
                 stepMove = 0
@@ -3975,6 +3999,7 @@ class Player:
                                 False, False, False, False, False]
                     for eachMove in range(8):
                         if(self.moves(move, stepMove, state, True, eachMove)):
+                            self.doMoveForQueen(move, state, self.str)
                             tempMove[eachMove] = True
                             isArrowLeft = True
                             stepArrow = 0
@@ -3985,16 +4010,17 @@ class Player:
                                 for eachArrow in range(8):
                                     if(self.moves(move, stepArrow, state, False, eachArrow)):
                                         tempArrow[eachArrow] = True
-                                        self.doMove(move, state, self.str)
-                                        depth += 1
+                                        self.doFireArrow(move, state)
+                                        depth[0] += 1
                                         best = max(best, self.alphabetaMinimax(state, depth,
-                                                                               not isMax, alpha, beta))
-                                        self.undoMove(move, state, self.str)
-                                        alpha = max(best, alpha)
-                                        if(beta <= alpha):
+                                                                               not isMax, alphabeta))
+                                        self.undoFireArrow(move, state)
+                                        alphabeta[0] = max(best, alphabeta[0])
+                                        if(alphabeta[1] <= alphabeta[0]):
                                             break
                                 if(all(item2 == False for item2 in tempArrow)):
                                     isArrowLeft = False
+                            self.undoMoveForQueen(move, state, self.str)
                     if(all(item1 == False for item1 in tempMove)):
                         isMoveLeft = False
         else:
@@ -4003,6 +4029,8 @@ class Player:
             if(self.str == 'w'):
                 opstr = 'b'
             for eachOpponent in range(4):
+                if(noMoveLeftOP[eachOpponent]):
+                    continue
                 move[0] = (opponentPos[eachOpponent][0],
                            opponentPos[eachOpponent][1])
                 isMoveLeft = True
@@ -4013,6 +4041,7 @@ class Player:
                                 False, False, False, False, False]
                     for eachMove in range(8):
                         if(self.moves(move, stepMove, state, True, eachMove)):
+                            self.doMoveForQueen(move, state, opstr)
                             tempMove[eachMove] = True
                             isArrowLeft = True
                             stepArrow = 0
@@ -4023,16 +4052,17 @@ class Player:
                                 for eachArrow in range(8):
                                     if(self.moves(move, stepArrow, state, False, eachArrow)):
                                         tempArrow[eachArrow] = True
-                                        self.doMove(move, state, opstr)
-                                        depth += 1
+                                        self.doFireArrow(move, state)
+                                        depth[0] += 1
                                         best = min(best, self.alphabetaMinimax(state, depth,
-                                                                               not isMax, alpha, beta))
-                                        self.undoMove(move, state, opstr)
-                                        beta = min(best, beta)
-                                        if(beta <= alpha):
+                                                                               not isMax, alphabeta))
+                                        self.undoFireArrow(move, state)
+                                        alphabeta[1] = min(best, alphabeta[1])
+                                        if(alphabeta[1] <= alphabeta[0]):
                                             break
                                 if(all(item2 == False for item2 in tempArrow)):
                                     isArrowLeft = False
+                            self.undoMoveForQueen(move, state, opstr)
                     if(all(item1 == False for item1 in tempMove)):
                         isMoveLeft = False
         return best
@@ -4040,44 +4070,97 @@ class Player:
     def findBestMove(self, state):
         playerPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
         opponentPos = [[0, 0], [0, 0], [0, 0], [0, 0]]
-        self.evaluate(state, playerPos, opponentPos)
-        bestVal = -9999999999999999999999
-        move = [(0, 0), (0, 0), (0, 0)]
+        noMoveLeftPL = [True, True, True, True]
+        noMoveLeftOP = [True, True, True, True]
+        numberofX = [0]
+        self.evaluate(state, playerPos, opponentPos, numberofX, noMoveLeftPL, noMoveLeftOP)
         bestMove = None
-        for eachPlayer in range(4):
-            move[0] = (playerPos[eachPlayer][0], playerPos[eachPlayer][1])
-            isMoveLeft = True
-            stepMove = 0
-            while(isMoveLeft):
-                stepMove += 1
-                tempMove = [False, False, False,
-                            False, False, False, False, False]
-                for eachMove in range(8):
-                    if(self.moves(move, stepMove, state, True, eachMove)):
-                        tempMove[eachMove] = True
-                        isArrowLeft = True
-                        stepArrow = 0
-                        while(isArrowLeft):
-                            stepArrow += 1
-                            tempArrow = [False, False, False,
-                                         False, False, False, False, False]
-                            for eachArrow in range(8):
-                                if(self.moves(move, stepArrow, state, False, eachArrow)):
-                                    tempArrow[eachArrow] = True
-                                    self.doMove(move, state, self.str)
-                                    depth = 0
-                                    best = self.alphabetaMinimax(state, depth,
-                                                                 False, -99999, 99999)
-                                    self.undoMove(move, state, self.str)
-                                    if(best - depth > bestVal):
-                                        bestVal = best - depth
-                                        bestMove = deepcopy(move)
-                            if(all(item2 == False for item2 in tempArrow)):
-                                isArrowLeft = False
-                if(all(item1 == False for item1 in tempMove)):
-                    isMoveLeft = False
+        if(all(item == True for item in noMoveLeftPL)):
+                return bestMove
+        if(self.str == 'b'):
+            #move randomly
+            i = random.randint(0, 3)
+            while(noMoveLeftPL[i]):
+                i = random.randint(0, 3)
+            row = playerPos[i][0]
+            col = playerPos[i][1]
+            randmove = random.randint(0, 7)
+            randstep = random.randint(1, 9)
+            randfire = random.randint(0, 7)
+            randstepfire = random.randint(1, 9)
+            move = [(row, col), (0, 0), (0, 0)]
+            while(not self.moves(move, randstep, state, True, randmove)):
+                randmove = random.randint(0, 7)
+                randstep = random.randint(1, 9)
+            self.doMoveForQueen(move, state, self.str)
+            while(not self.moves(move, randstepfire, state, False, randfire)):
+                randfire = random.randint(0, 7)
+                randstepfire = random.randint(1, 9)
+            self.undoMoveForQueen(move, state, self.str)
+            bestMove = deepcopy(move)
+        else:
+            if(numberofX[0] < 60):
+                #move randomly
+                i = random.randint(0, 3)
+                while(noMoveLeftPL[i]):
+                    i = random.randint(0, 3)
+                row = playerPos[i][0]
+                col = playerPos[i][1]
+                randmove = random.randint(0, 7)
+                randstep = random.randint(1, 9)
+                randfire = random.randint(0, 7)
+                randstepfire = random.randint(1, 9)
+                move = [(row, col), (0, 0), (0, 0)]
+                while(not self.moves(move, randstep, state, True, randmove)):
+                    randmove = random.randint(0, 7)
+                    randstep = random.randint(1, 9)
+                self.doMoveForQueen(move, state, self.str)
+                while(not self.moves(move, randstepfire, state, False, randfire)):
+                    randfire = random.randint(0, 7)
+                    randstepfire = random.randint(1, 9)
+                self.undoMoveForQueen(move, state, self.str)
+                bestMove = deepcopy(move)
+            else:
+                bestVal = -9999999999999999999999
+                move = [(0, 0), (0, 0), (0, 0)]
+                for eachPlayer in range(4):
+                    if(noMoveLeftPL[eachPlayer]):
+                        continue
+                    move[0] = (playerPos[eachPlayer][0], playerPos[eachPlayer][1])
+                    isMoveLeft = True
+                    stepMove = 0
+                    while(isMoveLeft):
+                        stepMove += 1
+                        tempMove = [False, False, False,
+                                    False, False, False, False, False]
+                        for eachMove in range(8):
+                            if(self.moves(move, stepMove, state, True, eachMove)):
+                                self.doMoveForQueen(move, state, self.str)
+                                tempMove[eachMove] = True
+                                isArrowLeft = True
+                                stepArrow = 0
+                                while(isArrowLeft):
+                                    stepArrow += 1
+                                    tempArrow = [False, False, False,
+                                                False, False, False, False, False]
+                                    for eachArrow in range(8):
+                                        if(self.moves(move, stepArrow, state, False, eachArrow)):
+                                            tempArrow[eachArrow] = True
+                                            self.doFireArrow(move, state)
+                                            depth = [0]
+                                            best = self.alphabetaMinimax(state, depth,
+                                                                        False, [-99999, 99999])
+                                            self.undoFireArrow(move, state)
+                                            if(best - depth[0] > bestVal):
+                                                bestVal = best - depth[0]
+                                                bestMove = deepcopy(move)
+                                    if(all(item2 == False for item2 in tempArrow)):
+                                        isArrowLeft = False
+                                self.undoMoveForQueen(move, state, self.str)
+                        if(all(item1 == False for item1 in tempMove)):
+                            isMoveLeft = False
         return bestMove
 
     def nextMove(self, state):
         # result = [(0,3),(5,3),(8,6)] # example move in wikipedia
-        return self.findBestMove2(state)
+        return self.findBestMove(state)
