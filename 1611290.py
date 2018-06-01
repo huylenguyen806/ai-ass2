@@ -307,7 +307,7 @@ class Player:
                               numberofX, noMoveLeftPL, noMoveLeftOP)
         best = None
         move = [(0, 0), (0, 0), (0, 0)]
-        if(score == 1000 or score == -1000 or (depth >= 0 and numberofX[0] < 55) 
+        if(score == 1000 or score == -1000 or (depth >= 0 and numberofX[0] < 42) 
                 or (depth >= 1 and numberofX[0] < 62) or depth >= 3):
             return score
         if(isMax):
