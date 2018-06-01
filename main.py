@@ -71,6 +71,9 @@ def play(student_a, student_b, start_state=Initial_Board):
     player_a = imp.load_source(student_a, student_a + ".py")
     player_b = imp.load_source(student_b, student_b + ".py")
 
+    count = 1000
+    num = [0,0]
+
     a = player_a.Player('w')
     b = player_b.Player('b')
     
